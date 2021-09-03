@@ -9,10 +9,10 @@ public class ExtensionState {
     private static ExtensionState state = null;
     private IBurpExtenderCallbacks callbacks;
     private Component repeaterBaseComponent;
-    private final RepeaterTabPaneHierarchyListener tabVisibleListener;
+    private final RepeaterTabChangeListener repeaterTabChangeListener;
 
     private ExtensionState() {
-        tabVisibleListener = new RepeaterTabPaneHierarchyListener();
+        repeaterTabChangeListener = new RepeaterTabChangeListener();
     }
 
     public static ExtensionState getInstance() {
@@ -37,7 +37,7 @@ public class ExtensionState {
         this.repeaterBaseComponent = repeaterBaseComponent;
     }
 
-    public RepeaterTabPaneHierarchyListener getTabVisibleListener() {
-        return tabVisibleListener;
+    public RepeaterTabChangeListener getRepeaterTabChangeListener() {
+        return repeaterTabChangeListener;
     }
 }

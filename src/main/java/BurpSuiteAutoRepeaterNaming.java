@@ -5,6 +5,9 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionStateListener;
 import com.staticflow.BurpGuiControl;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class BurpSuiteAutoRepeaterNaming implements IBurpExtender, IExtensionStateListener {
 
     private static final String REPEATER = "Repeater";
@@ -15,15 +18,24 @@ public class BurpSuiteAutoRepeaterNaming implements IBurpExtender, IExtensionSta
         callbacks.registerExtensionStateListener(this);
         callbacks.setExtensionName("BurpSuiteAutoRepeaterNaming");
         ExtensionState.getInstance().setCallbacks(callbacks);
-        ExtensionState.getInstance().setRepeaterBaseComponent(BurpGuiControl.getBaseBurpComponent(
-                REPEATER));
-        ExtensionState.getInstance().getRepeaterBaseComponent()
-         .addHierarchyListener(ExtensionState.getInstance().getTabVisibleListener());
+        Component repeaterComponent = BurpGuiControl.getBaseBurpComponent(
+                REPEATER);
+        if (repeaterComponent instanceof JTabbedPane ) {
+            ExtensionState.getInstance().setRepeaterBaseComponent(repeaterComponent);
+            ((JTabbedPane) ExtensionState.getInstance().getRepeaterBaseComponent()).addChangeListener(ExtensionState.getInstance().getRepeaterTabChangeListener());
+        } else {
+            Component jTabbedPane =
+                    BurpGuiControl.FindJTabbedPane((Container) repeaterComponent);
+            if( jTabbedPane != null ) {
+                ExtensionState.getInstance().setRepeaterBaseComponent(jTabbedPane);
+                ((JTabbedPane) ExtensionState.getInstance().getRepeaterBaseComponent()).addChangeListener(ExtensionState.getInstance().getRepeaterTabChangeListener());
+            }
+        }
     }
 
     @Override
     public void extensionUnloaded() {
-        ExtensionState.getInstance().getRepeaterBaseComponent().removeHierarchyListener(ExtensionState.getInstance().getTabVisibleListener());
+        ((JTabbedPane) ExtensionState.getInstance().getRepeaterBaseComponent()).removeChangeListener(ExtensionState.getInstance().getRepeaterTabChangeListener());
     }
 
 
